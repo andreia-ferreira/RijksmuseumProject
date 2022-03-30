@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/itemDetailsFragment"
+        android:name="pt.penguin.rijksmuseumproject.details.ItemDetailsFragment"
+        android:label="ItemDetailsFragment" />
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="pt.penguin.rijksmuseumproject.home.HomeFragment"
+        android:label="HomeFragment" >
+        <action
+            android:id="@+id/action_open_details"
+            app:destination="@id/itemDetailsFragment" />
+    </fragment>
+</navigation>
