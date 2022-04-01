@@ -13,8 +13,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
+import dagger.hilt.android.AndroidEntryPoint
 import pt.penguin.rijksmuseumproject.ui.theme.RijksmuseumProjectTheme
 
+@AndroidEntryPoint
 class ItemDetailsFragment: Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,

@@ -13,5 +13,10 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlin_version}"
     testImplementation 'junit:junit:4.13.2'
 
+    // Dagger
+    api "com.google.dagger:dagger:$dagger_version"
+    kapt "com.google.dagger:dagger-compiler:$dagger_version"
+
     implementation project(':domain')
+    implementation project(':common')
 }

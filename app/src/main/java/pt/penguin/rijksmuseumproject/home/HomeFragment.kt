@@ -17,6 +17,7 @@ import androidx.compose.material.Card
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -26,67 +27,55 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
+import dagger.hilt.android.AndroidEntryPoint
+import pt.penguin.rijksmuseumproject.home.model.MuseumCollectionUiModel
 import pt.penguin.rijksmuseumproject.ui.theme.RijksmuseumProjectTheme
+import javax.inject.Inject
+import javax.inject.Provider
 
+@AndroidEntryPoint
 @ExperimentalCoilApi
 class HomeFragment: Fragment() {
+
+    private val viewModel: HomeViewModel by viewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 RijksmuseumProjectTheme {
-                    HomeScreen()
+                    HomeScreen(viewModel)
                 }
             }
         }
     }
 
-    @Preview
     @Composable
-    fun HomeScreen() {
+    fun HomeScreen(viewModel: HomeViewModel) {
+        val state: MuseumCollectionUiModel? by viewModel.uiModel.observeAsState()
+        viewModel.init()
         Surface(
             modifier = Modifier.fillMaxSize()
         ) {
-            LazyColumn(horizontalAlignment = CenterHorizontally) {
-                item {
-                    Card(
-                        modifier = Modifier
-                            .wrapContentSize()
-                            .padding(16.dp)
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .height(intrinsicSize = IntrinsicSize.Max)
-                                .fillMaxWidth()
-                        ) {
-                            Image(
-                                painter = rememberImagePainter("https://lh3.googleusercontent.com/J-mxAE7CPu-DXIOx4QKBtb0GC4ud37da1QK7CzbTIDswmvZHXhLm4Tv2-1H3iBXJWAW_bHm7dMl3j5wv_XiWAg55VOM=s0"),
-                                contentDescription = "De Nachtwacht, Rembrandt van Rijn, 1642",
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .height(100.dp)
-                                    .fillMaxWidth()
-                                    .align(CenterHorizontally)
-                            )
-                            Column(
-                                modifier = Modifier.padding(8.dp)
-                            ) {
-                                Text(
-                                    text = "De Nachtwacht (1642)",
-                                    maxLines = 1,
-                                    fontSize = 14.sp
-                                )
-                                Text(
-                                    text = "Rembrandt van Rijn",
-                                    maxLines = 1,
-                                    fontSize = 14.sp
-                                )
+            state?.let {
+                when(it) {
+                    is MuseumCollectionUiModel.Loading -> {}
+                    is MuseumCollectionUiModel.Error -> {}
+                    is MuseumCollectionUiModel.Success -> {
+                        LazyColumn(horizontalAlignment = CenterHorizontally) {
+                            it.itemList.forEach { artwork ->
+                                item { MuseumCard(uiModel = artwork) }
                             }
                         }
                     }
@@ -94,4 +83,44 @@ class HomeFragment: Fragment() {
             }
         }
     }
+
+    @Composable
+    fun MuseumCard(uiModel: MuseumCollectionUiModel.Success.ItemUiModel) {
+        Card(
+            modifier = Modifier
+                .wrapContentSize()
+                .padding(16.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .height(intrinsicSize = IntrinsicSize.Max)
+                    .fillMaxWidth()
+            ) {
+                Image(
+                    painter = rememberImagePainter(uiModel.image),
+                    contentDescription = uiModel.longTitle,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .height(100.dp)
+                        .fillMaxWidth()
+                        .align(CenterHorizontally)
+                )
+                Column(
+                    modifier = Modifier.padding(8.dp)
+                ) {
+                    Text(
+                        text = uiModel.title,
+                        maxLines = 1,
+                        fontSize = 14.sp
+                    )
+                    Text(
+                        text = uiModel.author,
+                        maxLines = 1,
+                        fontSize = 14.sp
+                    )
+                }
+            }
+        }
+    }
+
 }
