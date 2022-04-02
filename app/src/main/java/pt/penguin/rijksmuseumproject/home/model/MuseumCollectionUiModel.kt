@@ -12,7 +12,8 @@ sealed class MuseumCollectionUiModel {
             val title: String,
             val longTitle: String,
             val image: String,
-            val author: String
+            val author: String,
+            val onClick: () -> Unit
         )
     }
 

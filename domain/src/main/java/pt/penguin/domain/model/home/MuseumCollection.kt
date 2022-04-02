@@ -1,4 +1,4 @@
-package pt.penguin.domain.model
+package pt.penguin.domain.model.home
 
 data class MuseumCollection(
     val count: Int,

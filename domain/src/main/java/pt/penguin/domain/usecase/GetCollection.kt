@@ -1,6 +1,6 @@
 package pt.penguin.domain.usecase
 
-import pt.penguin.domain.model.MuseumCollection
+import pt.penguin.domain.model.home.MuseumCollection
 import pt.penguin.domain.repository.MuseumRepository
 import pt.penguin.common.Result
 import javax.inject.Inject

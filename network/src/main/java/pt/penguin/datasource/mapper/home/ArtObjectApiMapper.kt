@@ -1,7 +1,7 @@
-package pt.penguin.datasource.mapper
+package pt.penguin.datasource.mapper.home
 
-import pt.penguin.data.model.ArtObjectDataModel
-import pt.penguin.datasource.model.ArtObjectApiModel
+import pt.penguin.data.model.home.ArtObjectDataModel
+import pt.penguin.datasource.model.home.ArtObjectApiModel
 import javax.inject.Inject
 
 class ArtObjectApiMapper @Inject constructor() {

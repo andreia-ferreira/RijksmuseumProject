@@ -1,5 +1,4 @@
-package pt.penguin.datasource.model
-
+package pt.penguin.datasource.model.home
 
 import com.google.gson.annotations.SerializedName
 

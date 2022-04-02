@@ -13,11 +13,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.navArgs
 import dagger.hilt.android.AndroidEntryPoint
 import pt.penguin.rijksmuseumproject.ui.theme.RijksmuseumProjectTheme
 
 @AndroidEntryPoint
 class ItemDetailsFragment: Fragment() {
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -39,7 +41,8 @@ class ItemDetailsFragment: Fragment() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colors.background
         ) {
-            Text("Hello Android!")
+            val args: ItemDetailsFragmentArgs by navArgs()
+            Text("Hello Android! ${args.objectNumber}")
         }
     }
 }

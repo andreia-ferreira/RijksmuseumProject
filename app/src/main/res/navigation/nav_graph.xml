@@ -7,13 +7,18 @@
     <fragment
         android:id="@+id/itemDetailsFragment"
         android:name="pt.penguin.rijksmuseumproject.details.ItemDetailsFragment"
-        android:label="ItemDetailsFragment" />
+        android:label="ItemDetailsFragment" >
+        <argument
+            android:name="objectNumber"
+            app:argType="string" />
+    </fragment>
     <fragment
         android:id="@+id/homeFragment"
         android:name="pt.penguin.rijksmuseumproject.home.HomeFragment"
         android:label="HomeFragment" >
         <action
             android:id="@+id/action_open_details"
-            app:destination="@id/itemDetailsFragment" />
+            app:destination="@id/itemDetailsFragment" >
+        </action>
     </fragment>
 </navigation>

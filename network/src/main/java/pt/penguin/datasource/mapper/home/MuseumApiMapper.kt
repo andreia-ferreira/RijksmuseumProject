@@ -1,8 +1,8 @@
-package pt.penguin.datasource.mapper
+package pt.penguin.datasource.mapper.home
 
-import pt.penguin.data.model.MuseumDataModel
-import pt.penguin.datasource.model.MuseumApiModel
+import pt.penguin.data.model.home.MuseumDataModel
 import pt.penguin.datasource.common.ApiMapperException
+import pt.penguin.datasource.model.home.MuseumApiModel
 import java.lang.Exception
 import javax.inject.Inject
 
