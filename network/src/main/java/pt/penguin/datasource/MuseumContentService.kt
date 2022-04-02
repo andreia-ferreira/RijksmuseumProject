@@ -1,7 +1,7 @@
 package pt.penguin.datasource
 
-import pt.penguin.data.model.details.ArtworkDataModel
 import pt.penguin.datasource.model.details.ArtworkApiModel
+import pt.penguin.datasource.model.details.ArtworkDetailsApiModel
 import pt.penguin.datasource.model.home.MuseumApiModel
 import retrofit2.Response
 import retrofit2.http.GET
@@ -18,7 +18,7 @@ interface MuseumContentService {
 
     @GET("en/collection/{object_number}")
     suspend fun getArtworkDetails(
-        @Query("key") key: String,
-        @Path(value = "object_number") objectNumber: String
+        @Path(value = "object_number") objectNumber: String,
+        @Query("key") key: String
     ) : Response<ArtworkApiModel?>
 }

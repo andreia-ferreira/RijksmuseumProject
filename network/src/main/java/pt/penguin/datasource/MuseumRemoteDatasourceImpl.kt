@@ -29,7 +29,7 @@ class MuseumRemoteDatasourceImpl @Inject constructor(
     override suspend fun getArtworkDetails(objectNumber: String): Result<ArtworkDataModel> {
         val result = museumContentService.getArtworkDetails(
             key = "0fiuZFh4",
-            objectNumber
+            objectNumber = objectNumber
         )
         return try {
             Result.Success(artworkApiMapper.mapToData(result.body()))

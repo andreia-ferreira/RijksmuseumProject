@@ -32,6 +32,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDirections
@@ -60,7 +61,8 @@ class HomeFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
+        savedInstanceState?.let { viewModel.init() }
+        viewModel.init()
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
@@ -74,8 +76,6 @@ class HomeFragment: Fragment() {
     @Composable
     fun HomeScreen(viewModel: HomeViewModel, onNavigate: (NavDirections) -> Unit) {
         val state: MuseumCollectionUiModel? by viewModel.uiModel.observeAsState()
-
-        viewModel.init()
         Surface(
             modifier = Modifier.fillMaxSize()
         ) {
@@ -96,7 +96,7 @@ class HomeFragment: Fragment() {
     }
 
     @Composable
-    fun MuseumCard(
+    private fun MuseumCard(
         uiModel: MuseumCollectionUiModel.Success.ItemUiModel,
         onNavigate: (NavDirections) -> Unit
     ) {
@@ -124,17 +124,19 @@ class HomeFragment: Fragment() {
                         .align(CenterHorizontally)
                 )
                 Column(
-                    modifier = Modifier.padding(8.dp)
+                    modifier = Modifier.padding(16.dp)
                 ) {
                     Text(
                         text = uiModel.title,
                         maxLines = 1,
-                        fontSize = 14.sp
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold
                     )
                     Text(
                         text = uiModel.author,
                         maxLines = 1,
-                        fontSize = 14.sp
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.ExtraLight
                     )
                 }
             }

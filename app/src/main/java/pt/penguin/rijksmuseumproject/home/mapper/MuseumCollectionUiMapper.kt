@@ -6,8 +6,7 @@ import javax.inject.Inject
 
 class MuseumCollectionUiMapper @Inject constructor() {
     fun mapToUi(
-        museumCollection: MuseumCollection,
-        onClickAction: (orderNumber: String) -> Unit
+        museumCollection: MuseumCollection
     ): MuseumCollectionUiModel {
         return with(museumCollection) {
             MuseumCollectionUiModel.Success(
@@ -17,8 +16,7 @@ class MuseumCollectionUiMapper @Inject constructor() {
                         title = item.title,
                         longTitle = item.longTitle,
                         author = item.author,
-                        image = item.webImage.orEmpty(),
-                        onClick = { onClickAction(item.objectNumber) }
+                        image = item.webImage.orEmpty()
                     )
                 }
             )
