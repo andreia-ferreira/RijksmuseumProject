@@ -10,7 +10,6 @@ import pt.penguin.common.Result
 import pt.penguin.domain.usecase.GetItemDetails
 import pt.penguin.rijksmuseumproject.details.mapper.ArtworkDetailsUiModelMapper
 import pt.penguin.rijksmuseumproject.details.model.ArtworkDetailsUiModel
-import pt.penguin.rijksmuseumproject.home.model.MuseumCollectionUiModel
 import javax.inject.Inject
 
 @HiltViewModel

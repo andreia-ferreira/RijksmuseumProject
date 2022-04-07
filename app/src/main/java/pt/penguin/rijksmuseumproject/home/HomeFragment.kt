@@ -5,50 +5,50 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Card
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDirections
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import dagger.hilt.android.AndroidEntryPoint
-import pt.penguin.rijksmuseumproject.R
+import kotlinx.coroutines.flow.collect
 import pt.penguin.rijksmuseumproject.home.model.MuseumCollectionUiModel
 import pt.penguin.rijksmuseumproject.ui.screen.ErrorScreen
 import pt.penguin.rijksmuseumproject.ui.screen.LoadingScreen
 import pt.penguin.rijksmuseumproject.ui.theme.RijksmuseumProjectTheme
-import javax.inject.Inject
-import javax.inject.Provider
 
 @AndroidEntryPoint
 @ExperimentalCoilApi
@@ -61,8 +61,6 @@ class HomeFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        savedInstanceState?.let { viewModel.init() }
-        viewModel.init()
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
@@ -74,19 +72,36 @@ class HomeFragment: Fragment() {
     }
 
     @Composable
-    fun HomeScreen(viewModel: HomeViewModel, onNavigate: (NavDirections) -> Unit) {
-        val state: MuseumCollectionUiModel? by viewModel.uiModel.observeAsState()
+    fun HomeScreen(viewModel: HomeViewModel, onClickItem: (NavDirections) -> Unit) {
+        val state: MuseumCollectionUiModel by viewModel.uiModel.collectAsState()
+        val scrollState: LazyListState = rememberLazyListState()
+        val endReached by remember {
+            derivedStateOf {
+                scrollState.layoutInfo.visibleItemsInfo.lastOrNull()?.index == scrollState.layoutInfo.totalItemsCount - 1
+            }
+        }
+
+        LaunchedEffect(scrollState) {
+            snapshotFlow { endReached }
+                .collect { viewModel.loadData() }
+        }
+
+
         Surface(
             modifier = Modifier.fillMaxSize()
         ) {
-            state?.let {
+            state.let {
                 when(it) {
+                    is MuseumCollectionUiModel.Empty -> { Text(text = "No results") }
                     is MuseumCollectionUiModel.Loading -> LoadingScreen()
                     is MuseumCollectionUiModel.Error -> ErrorScreen()
                     is MuseumCollectionUiModel.Success -> {
-                        LazyColumn(horizontalAlignment = CenterHorizontally) {
+                        LazyColumn(
+                            horizontalAlignment = CenterHorizontally,
+                            state = scrollState
+                        ) {
                             it.itemList.forEach { artwork ->
-                                item { MuseumCard(uiModel = artwork, onNavigate) }
+                                item { MuseumCard(uiModel = artwork, onClickItem) }
                             }
                         }
                     }
@@ -107,24 +122,26 @@ class HomeFragment: Fragment() {
                 .clickable {
                     val action = HomeFragmentDirections.actionOpenDetails(uiModel.objectNumber)
                     onNavigate(action)
-                }
+                },
+            elevation = 8.dp
         ) {
-            Column(
+            Row(
                 modifier = Modifier
-                    .height(intrinsicSize = IntrinsicSize.Max)
+                    .height(120.dp)
                     .fillMaxWidth()
             ) {
                 Image(
                     painter = rememberImagePainter(uiModel.image),
                     contentDescription = uiModel.longTitle,
-                    contentScale = ContentScale.Fit,
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .height(180.dp)
-                        .fillMaxWidth()
-                        .align(CenterHorizontally)
+                        .fillMaxHeight()
+                        .width(120.dp)
+                        .align(CenterVertically)
                 )
                 Column(
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier
+                        .padding(16.dp)
                 ) {
                     Text(
                         text = uiModel.title,

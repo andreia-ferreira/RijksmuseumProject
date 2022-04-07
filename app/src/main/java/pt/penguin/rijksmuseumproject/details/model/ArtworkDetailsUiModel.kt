@@ -1,7 +1,5 @@
 package pt.penguin.rijksmuseumproject.details.model
 
-import pt.penguin.rijksmuseumproject.home.model.MuseumCollectionUiModel
-
 sealed class ArtworkDetailsUiModel {
     object Loading: ArtworkDetailsUiModel()
     object Error: ArtworkDetailsUiModel()

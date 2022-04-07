@@ -12,10 +12,7 @@ class ArtworkDataMapper @Inject constructor() {
                 title = title,
                 image = image,
                 artist = artist,
-                physicalMedium = physicalMedium,
-                height = height,
-                width = width,
-                weight = weight,
+                mediumAndDimensions = mediumAndDimensions,
                 plaqueDescription = plaqueDescription
             )
         }

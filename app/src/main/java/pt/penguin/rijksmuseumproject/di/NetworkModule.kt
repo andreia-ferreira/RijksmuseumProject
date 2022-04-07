@@ -11,7 +11,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import pt.penguin.data.datasource.MuseumRemoteDatasource
 import pt.penguin.datasource.MuseumContentService
 import pt.penguin.datasource.MuseumRemoteDatasourceImpl
-import pt.penguin.rijksmuseumproject.BuildConfig
+
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -29,7 +29,7 @@ object NetworkModule {
         return Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
-            .baseUrl(BuildConfig.BASE_URL)
+            .baseUrl("https://www.rijksmuseum.nl/api/")
             .build()
     }
 

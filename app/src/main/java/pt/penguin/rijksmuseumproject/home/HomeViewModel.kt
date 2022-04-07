@@ -1,11 +1,10 @@
 package pt.penguin.rijksmuseumproject.home
 
-import SingleLiveEvent
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import pt.penguin.common.Result
 import pt.penguin.domain.usecase.GetCollection
@@ -19,19 +18,19 @@ class HomeViewModel @Inject constructor(
     private val uiMapper: MuseumCollectionUiMapper
 ): ViewModel() {
 
-    private val _uiModel: MutableLiveData<MuseumCollectionUiModel> = MutableLiveData()
-    val uiModel: LiveData<MuseumCollectionUiModel> = _uiModel
+    private val _uiState = MutableStateFlow<MuseumCollectionUiModel>(MuseumCollectionUiModel.Empty)
+    val uiModel: StateFlow<MuseumCollectionUiModel> = _uiState
 
-    fun init() {
-        _uiModel.postValue(MuseumCollectionUiModel.Loading)
+    init {
+        loadData()
+    }
+
+    fun loadData() {
+        _uiState.value = MuseumCollectionUiModel.Loading
         viewModelScope.launch {
             when(val result = getCollection.execute()) {
-                is Result.Success -> _uiModel.postValue(
-                    uiMapper.mapToUi(result.value)
-                )
-                is Result.Error -> _uiModel.postValue(
-                    MuseumCollectionUiModel.Error
-                )
+                is Result.Success -> _uiState.value = uiMapper.mapToUi(result.value)
+                is Result.Error -> _uiState.value = MuseumCollectionUiModel.Error
             }
         }
     }

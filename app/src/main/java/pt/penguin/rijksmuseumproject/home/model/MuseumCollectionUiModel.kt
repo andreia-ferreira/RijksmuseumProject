@@ -1,6 +1,7 @@
 package pt.penguin.rijksmuseumproject.home.model
 
 sealed class MuseumCollectionUiModel {
+    object Empty: MuseumCollectionUiModel()
     object Loading: MuseumCollectionUiModel()
     object Error: MuseumCollectionUiModel()
 

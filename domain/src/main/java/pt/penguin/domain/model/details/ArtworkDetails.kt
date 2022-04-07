@@ -5,9 +5,6 @@ data class ArtworkDetails(
     val title: String,
     val image: String?,
     val artist: String,
-    val physicalMedium: String,
-    val height: String,
-    val width: String,
-    val weight: String,
+    val mediumAndDimensions: List<String>,
     val plaqueDescription: String
 )

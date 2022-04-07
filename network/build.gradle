@@ -4,6 +4,11 @@ plugins {
     id 'kotlin-kapt'
 }
 
+def apikeyPropertiesFile = rootProject.file("apiKey.properties")
+def apikeyProperties = new Properties()
+
+apikeyProperties.load(new FileInputStream(apikeyPropertiesFile))
+
 android {
     compileSdk 31
 
@@ -13,6 +18,8 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
+        buildConfigField("String", "API_KEY", apikeyProperties['API_KEY'])
+        buildConfigField("String", "BASE_URL", "\"https://www.rijksmuseum.nl/api/\"")
     }
 
     buildTypes {
@@ -46,8 +53,8 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-scalars:2.1.0"
 
     // Dagger
-    api "com.google.dagger:dagger:$dagger_version"
-    kapt "com.google.dagger:dagger-compiler:$dagger_version"
+    implementation "com.google.dagger:hilt-android:$dagger_version"
+    kapt "com.google.dagger:hilt-compiler:$dagger_version"
 
     implementation project(':data')
     implementation project(':common')

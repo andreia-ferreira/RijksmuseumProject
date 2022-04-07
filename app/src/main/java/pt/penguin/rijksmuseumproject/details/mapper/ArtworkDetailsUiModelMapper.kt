@@ -14,10 +14,9 @@ class ArtworkDetailsUiModelMapper @Inject constructor() {
                 title = title,
                 image = image,
                 artist = artist,
-                mediumAndDimensionsDetails = "$physicalMedium $height x $width $weight",
+                mediumAndDimensionsDetails = mediumAndDimensions.joinToString( " | ") ,
                 plaqueDescription = plaqueDescription
             )
         }
     }
-    private fun String.orUnknown() = ifEmpty { "unknown" }
 }
