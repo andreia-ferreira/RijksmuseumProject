@@ -13,8 +13,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -28,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
@@ -53,7 +60,24 @@ class ItemDetailsFragment: Fragment() {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 RijksmuseumProjectTheme {
-                    ItemDetailsScreen()
+                    Scaffold(
+                        topBar = {
+                            TopAppBar(
+                                title = {},
+                                navigationIcon = {
+                                    IconButton(onClick = { findNavController().navigateUp() }) {
+                                        Icon(
+                                            imageVector = Icons.Filled.ArrowBack,
+                                            contentDescription = "Back"
+                                        )
+                                    }
+
+                                }
+                            )
+                        }
+                    ) {
+                        ItemDetailsScreen()
+                    }
                 }
             }
         }
@@ -70,7 +94,9 @@ class ItemDetailsFragment: Fragment() {
             state?.let {
                 when(it) {
                     is ArtworkDetailsUiModel.Loading -> LoadingScreen()
-                    is ArtworkDetailsUiModel.Error -> ErrorScreen()
+                    is ArtworkDetailsUiModel.Error -> ErrorScreen {
+                        viewModel.init(args.objectNumber)
+                    }
                     is ArtworkDetailsUiModel.Success -> ArtworkDetails(it)
                 }
             }

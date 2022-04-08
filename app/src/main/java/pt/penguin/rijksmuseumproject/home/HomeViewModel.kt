@@ -18,7 +18,7 @@ class HomeViewModel @Inject constructor(
     private val uiMapper: MuseumCollectionUiMapper
 ): ViewModel() {
 
-    private val _uiState = MutableStateFlow<MuseumCollectionUiModel>(MuseumCollectionUiModel.Empty)
+    private val _uiState = MutableStateFlow<MuseumCollectionUiModel>(MuseumCollectionUiModel.Loading)
     val uiModel: StateFlow<MuseumCollectionUiModel> = _uiState
 
     init {

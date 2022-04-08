@@ -16,21 +16,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Card
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
@@ -44,7 +41,6 @@ import androidx.navigation.findNavController
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import pt.penguin.rijksmuseumproject.home.model.MuseumCollectionUiModel
 import pt.penguin.rijksmuseumproject.ui.screen.ErrorScreen
 import pt.penguin.rijksmuseumproject.ui.screen.LoadingScreen
@@ -65,7 +61,13 @@ class HomeFragment: Fragment() {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 RijksmuseumProjectTheme {
-                    HomeScreen(viewModel) { dest -> findNavController().navigate(dest) }
+                    Scaffold(
+                        topBar = {
+                            TopAppBar(title = { Text(text = "Rijksmuseum") })
+                        }
+                    ) {
+                        HomeScreen(viewModel) { dest -> findNavController().navigate(dest) }
+                    }
                 }
             }
         }
@@ -73,35 +75,21 @@ class HomeFragment: Fragment() {
 
     @Composable
     fun HomeScreen(viewModel: HomeViewModel, onClickItem: (NavDirections) -> Unit) {
-        val state: MuseumCollectionUiModel by viewModel.uiModel.collectAsState()
-        val scrollState: LazyListState = rememberLazyListState()
-        val endReached by remember {
-            derivedStateOf {
-                scrollState.layoutInfo.visibleItemsInfo.lastOrNull()?.index == scrollState.layoutInfo.totalItemsCount - 1
-            }
-        }
-
-        LaunchedEffect(scrollState) {
-            snapshotFlow { endReached }
-                .collect { viewModel.loadData() }
-        }
-
+        val uiState by viewModel.uiModel.collectAsState()
 
         Surface(
             modifier = Modifier.fillMaxSize()
         ) {
-            state.let {
+            uiState.let {
                 when(it) {
-                    is MuseumCollectionUiModel.Empty -> { Text(text = "No results") }
                     is MuseumCollectionUiModel.Loading -> LoadingScreen()
-                    is MuseumCollectionUiModel.Error -> ErrorScreen()
+                    is MuseumCollectionUiModel.Error -> ErrorScreen { viewModel.loadData() }
                     is MuseumCollectionUiModel.Success -> {
                         LazyColumn(
-                            horizontalAlignment = CenterHorizontally,
-                            state = scrollState
+                            horizontalAlignment = CenterHorizontally
                         ) {
                             it.itemList.forEach { artwork ->
-                                item { MuseumCard(uiModel = artwork, onClickItem) }
+                                item { MuseumCard(uiState = artwork, onClickItem) }
                             }
                         }
                     }
@@ -112,7 +100,7 @@ class HomeFragment: Fragment() {
 
     @Composable
     private fun MuseumCard(
-        uiModel: MuseumCollectionUiModel.Success.ItemUiModel,
+        uiState: MuseumCollectionUiModel.Success.ItemUiModel,
         onNavigate: (NavDirections) -> Unit
     ) {
         Card(
@@ -120,7 +108,7 @@ class HomeFragment: Fragment() {
                 .wrapContentSize()
                 .padding(16.dp)
                 .clickable {
-                    val action = HomeFragmentDirections.actionOpenDetails(uiModel.objectNumber)
+                    val action = HomeFragmentDirections.actionOpenDetails(uiState.objectNumber)
                     onNavigate(action)
                 },
             elevation = 8.dp
@@ -131,8 +119,8 @@ class HomeFragment: Fragment() {
                     .fillMaxWidth()
             ) {
                 Image(
-                    painter = rememberImagePainter(uiModel.image),
-                    contentDescription = uiModel.longTitle,
+                    painter = rememberImagePainter(uiState.image),
+                    contentDescription = uiState.longTitle,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxHeight()
@@ -144,13 +132,13 @@ class HomeFragment: Fragment() {
                         .padding(16.dp)
                 ) {
                     Text(
-                        text = uiModel.title,
+                        text = uiState.title,
                         maxLines = 1,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = uiModel.author,
+                        text = uiState.author,
                         maxLines = 1,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.ExtraLight

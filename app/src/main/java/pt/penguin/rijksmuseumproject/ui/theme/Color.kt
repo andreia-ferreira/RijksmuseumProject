@@ -2,7 +2,6 @@ package pt.penguin.rijksmuseumproject.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple200 = Color(0xFFBB86FC)
-val Purple500 = Color(0xFF6200EE)
-val Purple700 = Color(0xFF3700B3)
-val Teal200 = Color(0xFF03DAC5)
+val Brown200 = Color(0xFFefdcd5)
+val Brown500 = Color(0xFFbcaaa4)
+val Brown700 = Color(0xFF8c7b75)
