@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -17,7 +18,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Colors
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
@@ -25,9 +30,16 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterVertically
@@ -81,8 +93,14 @@ class HomeFragment: Fragment() {
     @Composable
     fun HomeScreen(viewModel: HomeViewModel, onClickItem: (NavDirections) -> Unit) {
         val uiState by viewModel.uiModel.collectAsState()
+        val listState = rememberLazyListState()
+        val showButton by remember {
+            derivedStateOf {
+                listState.firstVisibleItemIndex > 1
+            }
+        }
 
-        Surface(
+        Column(
             modifier = Modifier.fillMaxSize()
         ) {
             uiState.let {
@@ -91,7 +109,8 @@ class HomeFragment: Fragment() {
                     is MuseumCollectionUiModel.Error -> ErrorScreen { viewModel.loadData() }
                     is MuseumCollectionUiModel.Success -> {
                         LazyColumn(
-                            horizontalAlignment = CenterHorizontally
+                            horizontalAlignment = CenterHorizontally,
+                            state = listState
                         ) {
                             it.itemList.forEachIndexed { index, itemUiModel ->
                                 val isNewSection = index == 0 || itemUiModel.author != it.itemList[index - 1].author
@@ -113,6 +132,14 @@ class HomeFragment: Fragment() {
                                     }
                                 }
                                 item { MuseumCard(uiState = itemUiModel, onClickItem) }
+                            }
+                            item {
+                                AnimatedVisibility(visible = showButton) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.padding(16.dp)
+                                    )
+                                    viewModel.loadData()
+                                }
                             }
                         }
                     }
@@ -151,7 +178,7 @@ class HomeFragment: Fragment() {
                         .align(CenterVertically)
                 )
                 Text(
-                    modifier =  Modifier
+                    modifier = Modifier
                         .padding(16.dp)
                         .align(CenterVertically),
                     text = uiState.title,

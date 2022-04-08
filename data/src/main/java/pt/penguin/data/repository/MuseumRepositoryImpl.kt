@@ -8,7 +8,6 @@ import pt.penguin.data.mapper.home.MuseumDataMapper
 import pt.penguin.data.model.home.MuseumDataModel
 import pt.penguin.domain.model.details.ArtworkDetails
 import pt.penguin.domain.model.home.ArtObjectDetails
-import pt.penguin.domain.model.home.MuseumCollection
 import pt.penguin.domain.repository.MuseumRepository
 import java.lang.Exception
 import javax.inject.Inject
@@ -20,13 +19,12 @@ class MuseumRepositoryImpl @Inject constructor(
     private val artworkDataMapper: ArtworkDataMapper,
 ): MuseumRepository {
 
+    private var nextPage = 1
+
     override suspend fun getMuseumCollection(): Result<List<ArtObjectDetails>> {
         return try {
-            val result = if (museumMemoryDatasource.hasValue()) {
-                museumMemoryDatasource.get()
-            } else {
-                (fetchRemote() as Result.Success).value.artObjects
-            }
+            fetchRemote()
+            val result = museumMemoryDatasource.get()
             Result.Success(museumDataMapper.mapToDomain(result))
         } catch (e: Exception) {
             Result.Error(e)
@@ -34,9 +32,12 @@ class MuseumRepositoryImpl @Inject constructor(
     }
 
     private suspend fun fetchRemote(): Result<MuseumDataModel> {
-        return museumRemoteDatasource.loadCollection(1).also {
+        return museumRemoteDatasource.loadCollection(nextPage).also {
             if (it is Result.Success) {
-                museumMemoryDatasource.set(it.value.artObjects)
+                val cache = museumMemoryDatasource.get().orEmpty().toMutableList()
+                cache.addAll(it.value.artObjects)
+                museumMemoryDatasource.set(cache)
+                nextPage ++
             }
         }
     }

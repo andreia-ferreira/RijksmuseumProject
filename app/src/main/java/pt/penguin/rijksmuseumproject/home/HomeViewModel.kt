@@ -22,11 +22,11 @@ class HomeViewModel @Inject constructor(
     val uiModel: StateFlow<MuseumCollectionUiModel> = _uiState
 
     init {
+        _uiState.value = MuseumCollectionUiModel.Loading
         loadData()
     }
 
     fun loadData() {
-        _uiState.value = MuseumCollectionUiModel.Loading
         viewModelScope.launch {
             when(val result = getCollection.execute()) {
                 is Result.Success -> _uiState.value = uiMapper.mapToUi(result.value)
