@@ -13,14 +13,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -40,6 +35,7 @@ import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import dagger.hilt.android.AndroidEntryPoint
 import pt.penguin.rijksmuseumproject.details.model.ArtworkDetailsUiModel
+import pt.penguin.rijksmuseumproject.ui.RijksmuseumTopAppBar
 import pt.penguin.rijksmuseumproject.ui.screen.ErrorScreen
 import pt.penguin.rijksmuseumproject.ui.screen.LoadingScreen
 import pt.penguin.rijksmuseumproject.ui.theme.RijksmuseumProjectTheme
@@ -61,20 +57,7 @@ class ItemDetailsFragment: Fragment() {
             setContent {
                 RijksmuseumProjectTheme {
                     Scaffold(
-                        topBar = {
-                            TopAppBar(
-                                title = {},
-                                navigationIcon = {
-                                    IconButton(onClick = { findNavController().navigateUp() }) {
-                                        Icon(
-                                            imageVector = Icons.Filled.ArrowBack,
-                                            contentDescription = "Back"
-                                        )
-                                    }
-
-                                }
-                            )
-                        }
+                        topBar = { RijksmuseumTopAppBar(navController = findNavController()) }
                     ) {
                         ItemDetailsScreen()
                     }

@@ -8,7 +8,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,32 +18,20 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Colors
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
@@ -59,6 +46,7 @@ import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import dagger.hilt.android.AndroidEntryPoint
 import pt.penguin.rijksmuseumproject.home.model.MuseumCollectionUiModel
+import pt.penguin.rijksmuseumproject.ui.RijksmuseumTopAppBar
 import pt.penguin.rijksmuseumproject.ui.screen.ErrorScreen
 import pt.penguin.rijksmuseumproject.ui.screen.LoadingScreen
 import pt.penguin.rijksmuseumproject.ui.theme.RijksmuseumProjectTheme
@@ -79,9 +67,7 @@ class HomeFragment: Fragment() {
             setContent {
                 RijksmuseumProjectTheme {
                     Scaffold(
-                        topBar = {
-                            TopAppBar(title = { Text(text = "Rijksmuseum") })
-                        }
+                        topBar = { RijksmuseumTopAppBar(navController = findNavController()) }
                     ) {
                         HomeScreen(viewModel) { dest -> findNavController().navigate(dest) }
                     }
