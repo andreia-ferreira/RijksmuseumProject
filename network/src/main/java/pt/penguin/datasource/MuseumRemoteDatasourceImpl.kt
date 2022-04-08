@@ -17,7 +17,7 @@ class MuseumRemoteDatasourceImpl @Inject constructor(
     override suspend fun loadCollection(pageNumber: Int): Result<MuseumDataModel> {
         val museumApiModel = museumContentService.getCollection(
             key = BuildConfig.API_KEY,
-            resultsPerPage = RESULTS_PER_PAGE,
+            sorting = SORTING_KEY,
             page = pageNumber
         )
         return try {
@@ -40,6 +40,6 @@ class MuseumRemoteDatasourceImpl @Inject constructor(
     }
 
     companion object {
-        const val RESULTS_PER_PAGE = 10
+        const val SORTING_KEY = "artist"
     }
 }

@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,6 +18,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Card
+import androidx.compose.material.Colors
+import androidx.compose.material.Divider
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -24,6 +28,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
@@ -88,8 +93,26 @@ class HomeFragment: Fragment() {
                         LazyColumn(
                             horizontalAlignment = CenterHorizontally
                         ) {
-                            it.itemList.forEach { artwork ->
-                                item { MuseumCard(uiState = artwork, onClickItem) }
+                            it.itemList.forEachIndexed { index, itemUiModel ->
+                                val isNewSection = index == 0 || itemUiModel.author != it.itemList[index - 1].author
+                                if (isNewSection) {
+                                    item {
+                                        Column( modifier = Modifier.padding(horizontal = 16.dp)) {
+                                            Text(
+                                                modifier = Modifier.padding(vertical = 8.dp),
+                                                text = itemUiModel.author,
+                                                fontSize = 14.sp,
+                                                fontWeight = FontWeight.ExtraLight,
+                                            )
+                                            Divider(
+                                                modifier = Modifier.fillMaxWidth(),
+                                                thickness = 1.dp,
+                                                color = MaterialTheme.colors.primary
+                                            )
+                                        }
+                                    }
+                                }
+                                item { MuseumCard(uiState = itemUiModel, onClickItem) }
                             }
                         }
                     }
@@ -106,7 +129,7 @@ class HomeFragment: Fragment() {
         Card(
             modifier = Modifier
                 .wrapContentSize()
-                .padding(16.dp)
+                .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 8.dp)
                 .clickable {
                     val action = HomeFragmentDirections.actionOpenDetails(uiState.objectNumber)
                     onNavigate(action)
@@ -115,7 +138,7 @@ class HomeFragment: Fragment() {
         ) {
             Row(
                 modifier = Modifier
-                    .height(120.dp)
+                    .height(80.dp)
                     .fillMaxWidth()
             ) {
                 Image(
@@ -127,23 +150,14 @@ class HomeFragment: Fragment() {
                         .width(120.dp)
                         .align(CenterVertically)
                 )
-                Column(
-                    modifier = Modifier
+                Text(
+                    modifier =  Modifier
                         .padding(16.dp)
-                ) {
-                    Text(
-                        text = uiState.title,
-                        maxLines = 1,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = uiState.author,
-                        maxLines = 1,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.ExtraLight
-                    )
-                }
+                        .align(CenterVertically),
+                    text = uiState.title,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
             }
         }
     }

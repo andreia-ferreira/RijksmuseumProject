@@ -12,8 +12,9 @@ interface MuseumContentService {
     @GET("en/collection")
     suspend fun getCollection(
         @Query("key") key: String,
-        @Query("ps") resultsPerPage: Int,
-        @Query("p") page: Int
+        @Query("s") sorting: String,
+        @Query("p") page: Int,
+        @Query("imgonly") imgOnly: Boolean = true
     ) : Response<MuseumApiModel?>
 
     @GET("en/collection/{object_number}")
