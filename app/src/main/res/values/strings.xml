@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">RijksmuseumProject</string>
+
+    <string name="error_loading">Error loading museum collection :(</string>
+    <string name="error_retry">Retry</string>
+
+    <string name="test_tag_section_title">sectionTitle</string>
+    <string name="test_tag_card">itemCard</string>
+    <string name="test_tag_card_title">itemTitle</string>
+    <string name="test_tag_load_more_indicator">loadMoreIndicator</string>
+    <string name="test_tag_error_load">errorLoadingText</string>
+    <string name="test_tag_error_retry">errorLoadingRetryButton</string>
+    <string name="test_tag_loading">loadingItem</string>
+    <string name="test_tag_detail_title">detailTitle</string>
+    <string name="test_tag_detail_dimensions">detailDimension</string>
+    <string name="test_tag_detail_plaque">detailPlaque</string>
 </resources>
