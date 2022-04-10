@@ -31,6 +31,7 @@ class ItemDetailsFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        viewModel.init(args.objectNumber)
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
@@ -39,7 +40,6 @@ class ItemDetailsFragment: Fragment() {
                         topBar = { RijksmuseumTopAppBar(navController = findNavController()) }
                     ) {
                         val state: ArtworkDetailsUiModel? by viewModel.uiModel.observeAsState()
-                        viewModel.init(args.objectNumber)
                         ItemDetailsScreen(state) { viewModel.init(args.objectNumber) }
                     }
                 }
